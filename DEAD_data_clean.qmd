@@ -1,0 +1,65 @@
+---
+title: "DEAD_data_clean"
+format: pdf
+editor: visual
+---
+
+```{r}
+library(readr)
+county_population <- read_csv("Downloads/county_population_in_iowa_by_year_707_rows.csv")
+
+```
+```{r}
+# filter by < 2022 
+library(dplyr)
+library(lubridate)
+
+county_population <- county_population %>%
+  mutate(
+    calendar_year = ymd(calendar_year),
+    year = year(calendar_year)
+  ) %>%
+  filter(year >= 2022)
+```
+
+```{r}
+liquor_sales_2026_snippet <- read_csv("Downloads/iowa_liquor_sales_2024_1261_rows/iowa_liquor_sales_2024_1261_rows_part_0001.csv")
+```
+```{r}
+# filter by < 2022 
+liquor_sales_2026_snippet <- liquor_sales_2026_snippet %>%
+  mutate(
+    ordered_on = ymd(ordered_on),
+    year = year(ordered_on),
+    month = month(ordered_on)
+  ) %>%
+  filter(year >= 2022)
+```
+
+```{r}
+liquor_sales_2026_snippet <- liquor_sales_2026_snippet %>%
+  left_join(
+    county_population,
+    by = c("county_fips_code", "year")
+  )
+```
+
+```{r}
+county_income <- read_csv("Downloads/iowa_median_household_income_in_the_past_12_months_acs_5_year_estimates_530_rows.csv")
+```
+```{r}
+county_income  <- county_income  %>%
+  filter(data_collection_period == "2020-2024") %>%
+  filter(!is.na(county_fips_code))
+
+liquor_sales_2026_snippet <- liquor_sales_2026_snippet %>%
+  left_join(
+    select(county_income, median_household_income, county_fips_code),
+    by = "county_fips_code"
+  )
+```
+
+
+
+
+
