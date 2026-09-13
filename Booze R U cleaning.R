@@ -1,6 +1,6 @@
 library(tidyverse)
 
-# Read files
+# Read files (use your own filepaths)
 # 2022
 sales_2022_1 <- read.csv(
   "C:/Users/stanl/OneDrive/Documents/OneNote Notebooks/Data Science/4401 - Data Science Process and Ethics/Project 1/iowa_liquor_sales_2022_1259_rows/iowa_liquor_sales_2022_1259_rows_part_0001.csv"
@@ -129,7 +129,7 @@ all_sales <- rbind(
 )
 
 
-# Formatting date (ordered_by)
+# Formatting date (ordered_by) will take a while to run
 all_sales <- all_sales %>%
   mutate(
     ordered_on = as.Date(ordered_on),
@@ -145,21 +145,25 @@ monthly_sales <- all_sales %>%
     Month,
     Year_Month,
     county_name,
-    category_name
+    category_name,
+    im_desc
   ) %>%
   summarise(
     Total_Bottles_Sold = sum(sales_bottles, na.rm = TRUE),
+    Total_Liters_Sold = sum(sales_liters, na.rm = TRUE),
+    Total_Gallons_Sold = sum(sales_gallons, na.rm = TRUE),
     .groups = "drop"
   ) %>%
   arrange(
     Year,
     Month,
     county_name,
-    category_name
+    category_name,
+    im_desc
   )
 
 
-# Save results 
+# Save results (change location when saving)
 write.csv(
   monthly_sales,
   "C:/Users/stanl/OneDrive/Documents/OneNote Notebooks/Data Science/4401 - Data Science Process and Ethics/Project 1/iowa_liquor_monthly_totals_by_county.csv",
