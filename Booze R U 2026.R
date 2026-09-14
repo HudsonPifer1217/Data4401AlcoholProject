@@ -39,10 +39,10 @@ monthly_sales <- all_sales %>%
     Month,
     Year_Month,
     county_name,
-    category_name,
-    im_desc
+    store_no
   ) %>%
   summarise(
+    store_name = first(store_name),
     Total_Bottles_Sold = sum(sales_bottles, na.rm = TRUE),
     Total_Liters_Sold = sum(sales_liters, na.rm = TRUE),
     Total_Gallons_Sold = sum(sales_gallons, na.rm = TRUE),
@@ -52,10 +52,8 @@ monthly_sales <- all_sales %>%
     Year,
     Month,
     county_name,
-    category_name,
-    im_desc
+    store_no,
   )
-
 
 # Save results (change location when saving)
 write.csv(
