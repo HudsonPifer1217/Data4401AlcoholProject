@@ -168,3 +168,61 @@ write.csv(
   "C:/Users/stanl/OneDrive/Documents/OneNote Notebooks/Data Science/4401 - Data Science Process and Ethics/Project 1/iowa_liquor_monthly_totals_by_county.csv",
   row.names = FALSE
 )
+
+
+#Graphs
+quarterly_sales <- monthly_sales %>%
+  group_by(
+    Year,
+    Month
+  ) %>%
+  summarise(
+    Total_Liters_Sold = sum(Total_Liters_Sold, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+quarterly_sales <- quarterly_sales %>%
+  mutate(
+    Quarter = case_when(
+      Month %in% c("01", "02", "03") ~ "Q1",
+      Month %in% c("04", "05", "06") ~ "Q2",
+      Month %in% c("07", "08", "09") ~ "Q3",
+      Month %in% c("10", "11", "12") ~ "Q4"
+    )
+  ) %>%
+  group_by(Year, Quarter) %>%
+  summarise(
+    Total_Liters_Sold = sum(Total_Liters_Sold, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+quarterly_sales <- quarterly_sales %>%
+  mutate(
+    Year_Quarter = paste(Year, Quarter, sep = "-")
+  )
+
+ggplot(
+  data = quarterly_sales,
+  aes(
+    x = Year_Quarter,
+    y = Total_Liters_Sold,
+    group = 1
+  )
+) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 2.5) +
+  labs(
+    title = "Quarterly Total Liters Sold",
+    x = "Year and Quarter",
+    y = "Total Liters Sold"
+  ) +
+  scale_y_continuous(
+    labels = scales::label_number(big.mark = ",")
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(
+      angle = 45,
+      hjust = 1
+    )
+  )
